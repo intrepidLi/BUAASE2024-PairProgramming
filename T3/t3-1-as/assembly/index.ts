@@ -120,11 +120,9 @@ export function mancalaBoard(
   return board;
 }
 
-export function isFinish(borad:Array<i32>): i32 {
-  let side1Empty = borad.slice(0,6).every(hole => hole === 0);
-  let side2Empty = borad.slice(7,13).every(hole => hole === 0);
-  console.log("side1 " + side1Empty.toString());
-  console.log("side2 " + side2Empty.toString());
+export function isFinish(board:Array<i32>): i32 {
+  let side1Empty = board.slice(0,6).every(hole => hole === 0);
+  let side2Empty = board.slice(7,13).every(hole => hole === 0);
   if (side1Empty) return 1;
   if (side2Empty) return 2;
   return 0;
