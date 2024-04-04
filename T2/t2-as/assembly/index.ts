@@ -38,11 +38,18 @@ export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
   }
   let score1: i32 = 0;
   let score2: i32 = 0;
+  let nextDirec = flag;
   for (let i = 0; i < size; i++) {
     let direct = seq[i] / 10;
+    if (direct != nextDirec) {
+      return 30000 + i;
+    }
     let hole = seq[i] % 10; //start from this hole
-    hole = (direct === 2) ? 7 - hole : hole;
+    hole = direct === 2 ? 7 - hole : hole;
     let piece = kalah[direct][hole]; //leave piece sum
+    if (piece == 0) {
+      return 30000 + i;
+    }
     let nextFlag = false;
     kalah[direct][hole] = 0;
     while (piece > 0) {
@@ -96,6 +103,12 @@ export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
         hole = 7;
       }
     }
+    if (!nextFlag) {
+      nextDirec = 3 - direct;
+    } else {
+      nextDirec = direct;
+    }
+    console.log(i.toString() + " " + nextDirec.toString());
     if (direct === 1) {
       if (hole > 0 && kalah[1][hole] === 1 && kalah[2][hole] != 0) {
         score1 += kalah[1][hole] + kalah[2][hole];
@@ -110,6 +123,42 @@ export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
       }
     }
   }
-  let score = flag === 1 ? score1 : score2;
-  return 20000 + score;
+  let res = isFinish(kalah[1], kalah[2]);
+  if (res == 0) {
+    let score = flag === 1 ? score1 : score2;
+    return 20000 + score;
+  }
+  if (res == 1) {
+    for (let j = 1; j <= 6; j++) {
+      score2 += kalah[2][j];
+    }
+  } else {
+    for (let j = 1; j <= 6; j++) {
+      score1 += kalah[1][j];
+    }
+  }
+  let score = flag === 1 ? score1 - score2 : score2 - score1;
+  return 15000 + score;
+}
+
+export function isFinish(seq1: Array<i32>, seq2: Array<i32>): i32 {
+  let flag1: bool = true;
+  for (let j = 1; j <= 6; j++) {
+    if (seq1[j] !== 0) {
+      flag1 = false;
+    }
+  }
+  if (flag1) {
+    return 1;
+  }
+  let flag2: bool = true;
+  for (let j = 1; j <= 6; j++) {
+    if (seq2[j] !== 0) {
+      flag2 = false;
+    }
+  }
+  if (flag2) {
+    return 2;
+  }
+  return 0;
 }
