@@ -1,3 +1,5 @@
+// import { process } from 'process'
+
 export class State {
   private turn: i32;
   private board: StaticArray<i32> = new StaticArray<i32>(14);
@@ -5,9 +7,15 @@ export class State {
     this.turn = curPlayer;
     this.board = new StaticArray<i32>(14);
     if (array && array.length == 14) {
-      for (let i: i32 = 0; i < 14; i++) {
+      for (let i: i32 = 0; i < 7; i++) {
         this.board[i] = array[i];
       }
+
+      for (let i: i32 = 7; i <= 12; i++) {
+        this.board[19 - i] = array[i];
+      }
+
+      this.board[13] = array[13];
     } else if (array && array.length != 14) {
       throw new Error("Array must have exactly 14 elements.");
     } else {
@@ -108,6 +116,17 @@ export class State {
   public isFinish(): i32 {
     let side1Empty = this.board.slice(0, 6).every((hole) => hole === 0);
     let side2Empty = this.board.slice(7, 13).every((hole) => hole === 0);
+    if (side1Empty) {
+      for (let j = 7; j <= 12; j++) {
+        this.board[13] += this.board[j];
+        this.board[j] = 0;
+      }
+    } else if (side2Empty) {
+      for (let j = 0; j <= 5; j++) {
+        this.board[6] += this.board[j];
+        this.board[j] = 0;
+      }
+    }
     if (side1Empty) return 1;
     if (side2Empty) return 2;
     return 0;
@@ -148,5 +167,62 @@ export class State {
     }
 
     return -1;
+  }
+
+  public getEmptyPocketNum(): i32 {
+    let count = 0;
+    for (let i = 0; i < 6; i++) {
+      if (this.board[i] === 0) {
+        count++;
+      }
+    }
+    for (let i = 7; i < 13; i++) {
+      if (this.board[i] === 0) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  // all player Score Pocket add together
+  public getPSum(flag: i32): i32 {
+    let sum = 0;
+    if (flag == 1) {
+      for (let i = 0; i <= 6; i++) {
+        sum += this.board[i];
+      }
+    } else {
+      for (let i = 7; i <= 13; i++) {
+        sum += this.board[i];
+      }
+    }
+    return sum;
+  }
+
+  public print(): void {
+    console.log(
+      "*************************** State ***************************"
+    );
+    console.log("board is:");
+    console.log("player 1:");
+    for (let i = 0; i < 6; i++) {
+      // process.stdout.write(this.board[i].toString() + " ");
+      console.log(i.toString() + ": " + this.board[i].toString() + " ");
+    }
+    console.log("Score: " + this.board[6].toString());
+
+    console.log("player 2:");
+    for (let i = 12; i >= 7; i--) {
+      // process.stdout.write(this.board[i].toString() + " ");
+      console.log(i.toString() + ": " + this.board[i].toString() + " ");
+    }
+    console.log("Score: " + this.board[13].toString());
+
+    console.log("turn: " + this.turn.toString());
+    console.log("board[13] is: " + this.board[13].toString());
+
+    console.log(
+      "*************************** End State ***************************"
+    );
   }
 }

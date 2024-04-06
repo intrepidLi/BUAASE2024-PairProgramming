@@ -56,11 +56,12 @@ function readTXTFile(file) {
 // subFolders.forEach(subFolder => {
 
 // })
-fs.readFile('output1.txt', 'utf8', function(err, data) {
+fs.readFile('output0.txt', 'utf8', function(err, data) {
     if (err) throw err;
-    readTXTFile(data);
+    // readTXTFile(data);
     // assert.strictEqual(mancalaResult(1,[13, 16, 13, 23, 12, 25, 13, 24, 12, 15, 24, 25], 12),30001);
     assert.strictEqual(mancalaResult(1,[13,15,22,21,11],5),20004);
+    assert.strictEqual(mancalaResult(2,[23, 24, 12, 16, 22, 25, 14, 21, 24, 25, 26, 16, 22, 15, 26, 24, 14, 25, 26, 23, 16, 12, 26, 25, 13, 21, 14, 24, 15, 16],30),15028);
     assert.strictEqual(mancalaResult(1,[11,12],2),30001);
     assert.strictEqual(mancalaResult(1,[14],1),20001);
 

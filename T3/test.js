@@ -7,12 +7,15 @@ import { mancalaOperator as op1 } from "./t3-2-as/build/release.js";
 // [Write your own "import" for other PLs.]
 
 // Choose proper "import" depending on your PL.
-import { mancalaOperator as op2 } from "./t3-2-as-rival/build/release.js";
+// import { mancalaOperator as op2 } from "./t3-2-as-rival/build/release.js";
+import { mancalaOperator as op2 } from "./t3-2-as-rival/t3-2-c-pre-glue.js";
 // import { mancala_operator as op2 } from "./t3_2_rust_rival/pkg/t3_2_rust.js"
 // [Write your own "import" for other PLs.]
 
 // Choose proper "import" depending on your PL.
 import { mancalaBoard as board } from "./t3-1-as/build/release.js";
+
+// import { State } from "./t3-1-as/src/state.js";
 // import { mancala_board as board } from "./t3_1_rust/pkg/t3_1_rust.js"
 // [Write your own "import" for other PLs.]
 
@@ -140,103 +143,132 @@ function readTXTFile(file) {
 
 // });
 
-let op1wins = 0;
-let op2wins = 0;
-let op3wins = 0;
-for (let i = 0; i < 1000; i++) {
-  let operator, status, operation, operationSequence, boardReturn, isEnded;
+  let op1wins = 0;
+  let op2wins = 0;
+  let op3wins = 0;
   let op1Result = 0,
-    op2Result = 0;
-  let op1Time = 0,
-    op2Time = 0,
-    timeStamp = 0;
-  // Firstly, start from op1.
-  operator = 1;
-  status = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
-  operation = 0;
-  operationSequence = [];
-  isEnded = false;
-  do {
-    if (operator == 1) {
-      timeStamp = performance.now() * 1000;
+      op2Result = 0;
+  
+    let operator, status, operation, operationSequence, boardReturn, isEnded;
+    
+    let op1Result1 = 0,
+      op2Result1 = 0;
+    let op1Time = 0,
+      op2Time = 0,
+      timeStamp = 0;
+    // Firstly, start from op1.
+    operator = 1;
+    status = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+    operation = 0;
+    operationSequence = [];
+    isEnded = false;
+    do {
+      if (operator == 1) {
+        timeStamp = performance.now() * 1000;
 
-      operation = op1(1, status);
-      // console.log("op1", operation);
-      op1Time += performance.now() * 1000 - timeStamp;
-      operationSequence.push(operation);
-      boardReturn = board(1, operationSequence, operationSequence.length);
-      // console.log("board", boardReturn);
-      // console.log("******************************\n");
-    } else {
-      timeStamp = performance.now() * 1000;
-      operation = op2(2, status);
-      // console.log("op2", operation);
-      op2Time += performance.now() * 1000 - timeStamp;
-      operationSequence.push(operation);
-      boardReturn = board(2, operationSequence, operationSequence.length);
-      // console.log("board", boardReturn);
-      // console.log("******************************\n");
+        operation = op1(1, status);
+        // console.log("op1", operation);
+        op1Time += performance.now() * 1000 - timeStamp;
+        operationSequence.push(operation);
+        boardReturn = board(1, operationSequence, operationSequence.length);
+        // console.log("board", boardReturn);
+        // console.log("******************************\n");
+      } else {
+        timeStamp = performance.now() * 1000;
+        operation = op2(2, status);
+        // console.log("op2", operation);
+        op2Time += performance.now() * 1000 - timeStamp;
+        operationSequence.push(operation);
+        boardReturn = board(2, operationSequence, operationSequence.length);
+        // console.log("board", boardReturn);
+        // console.log("******************************\n");
+      }
+      if (boardReturn[14] == 1) {
+        operator = 1;
+        status = boardReturn.slice(0, 14);
+      } else if (boardReturn[14] == 2) {
+        operator = 2;
+        status = boardReturn.slice(0, 14);
+      } else {
+        isEnded = true;
+        op1Result += boardReturn[14] - 200;
+        op1Result1 += boardReturn[14] - 200;
+        op2Result -= boardReturn[14] - 200;
+        op2Result1 -= boardReturn[14] - 200;
+      }
+    } while (!isEnded);
+    // console.log("first hand: ours");
+    // console.log("operationSequence", operationSequence);
+    // console.log("boardReturn", boardReturn);
+    // console.log("******************************\n");
+    if (op1Result1 > op2Result1) {
+      op1wins++;
+    } else if (op1Result1 < op2Result1) {
+      op2wins++;
+    } else if (op1Result1 === op2Result1) {
+      op3wins++;
     }
-    if (boardReturn[14] == 1) {
-      operator = 1;
-      status = boardReturn.slice(0, 14);
-    } else if (boardReturn[14] == 2) {
-      operator = 2;
-      status = boardReturn.slice(0, 14);
-    } else {
-      isEnded = true;
-      op1Result += boardReturn[14] - 200;
-      op2Result -= boardReturn[14] - 200;
-    }
-  } while (!isEnded);
-
-  // console.log("🎉 Finished battle, result: " + op1Result + ":" + op2Result + ".");
-  // Now change to start from op2.
- operator = 2;
- status = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
- operation = 0;
- operationSequence = [];
- isEnded = false;
+    // console.log("🎉 Finished battle, result: " + op1Result + ":" + op2Result + ".");
+    // Now change to start from op2.
+   operator = 2;
+   status = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+   operation = 0;
+   operationSequence = [];
+   isEnded = false;
+    op1Result1 = 0;
+    op2Result1 = 0;
  
- do {
-   if (operator == 1) {
-     timeStamp = performance.now() * 1000;
-     operation = op1(1, status);
-     op1Time += performance.now() * 1000 - timeStamp;
-     operationSequence.push(operation);
-     boardReturn = board(1, operationSequence, operationSequence.length);
-   } else {
-     timeStamp = performance.now() * 1000;
-     operation = op2(2, status);
-     op2Time += performance.now() * 1000 - timeStamp;
-     operationSequence.push(operation);
-     boardReturn = board(2, operationSequence, operationSequence.length);
+   do {
+     if (operator == 1) {
+       timeStamp = performance.now() * 1000;
+       operation = op1(1, status);
+       op1Time += performance.now() * 1000 - timeStamp;
+       operationSequence.push(operation);
+       boardReturn = board(1, operationSequence, operationSequence.length);
+     } else {
+       timeStamp = performance.now() * 1000;
+       operation = op2(2, status);
+       op2Time += performance.now() * 1000 - timeStamp;
+       operationSequence.push(operation);
+       boardReturn = board(2, operationSequence, operationSequence.length);
+     }
+     if (boardReturn[14] == 1) {
+       operator = 1;
+       status = boardReturn.slice(0, 14);
+     } else if (boardReturn[14] == 2) {
+       operator = 2;
+       status = boardReturn.slice(0, 14);
+     } else {
+        isEnded = true;
+        op1Result += boardReturn[14] - 200;
+        op2Result -= boardReturn[14] - 200;
+        op1Result1 += boardReturn[14] - 200;
+        op2Result1 -= boardReturn[14] - 200;
+     }
+   } while (!isEnded);
+    // console.log("first hand: rivals");
+    // console.log("operationSequence", operationSequence);
+    // console.log("boardReturn", boardReturn);
+    // console.log("******************************\n");
+
+   if (op1Result1 > op2Result1) {
+     op1wins++;
+   } else if (op1Result1 < op2Result1) {
+     op2wins++;
+   } else if (op1Result1 === op2Result1) {
+     op3wins++;
    }
-   if (boardReturn[14] == 1) {
-     operator = 1;
-     status = boardReturn.slice(0, 14);
-   } else if (boardReturn[14] == 2) {
-     operator = 2;
-     status = boardReturn.slice(0, 14);
-   } else {
-     isEnded = true;
-     op1Result += boardReturn[14] - 200;
-     op2Result -= boardReturn[14] - 200;
-   }
- } while (!isEnded);
-
-  if (op1Result > op2Result) {
-    op1wins++;
-  } else if (op1Result < op2Result) {
-    op2wins++;
-  } else if (op1Result === op2Result) {
-    op3wins++;
-  }
-    op1Time = op1Time / 1000;
-    op2Time = op2Time / 1000;
-}
+     op1Time = op1Time / 1000;
+     op2Time = op2Time / 1000;
+ 
 
 
-// console.log("🎉 Finished battle, result: " + op1Result + ":" + op2Result + ".");
+console.log("🎉 Finished battle, result: " + op1Result + ":" + op2Result + ".");
 console.log("🎉 Finished battle, result: " + op1wins + ":" + op2wins + ":" + op3wins + ".");
-// console.log("⏰ Processing Time: " + op1Time + ":" + op2Time + ".");
+console.log("⏰ Processing Time: " + op1Time + ":" + op2Time + ".");
+
+
+// test_proceed_action();
+
+
+

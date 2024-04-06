@@ -29,22 +29,16 @@ export function add(a: i32, b: i32): i32 {
 // 如果本局每一步都符合规则且还未游戏结束（参照规则 6）：返回 $ 20000 + 先手的计分洞中的棋数$。例如如果此时先手的计分洞中棋数为 3，返回数字 20003；
 // 如果本局的整个行动序列中出现了不符合规则的操作：返回 $ 30000 + 第一个不合法操作所在的步数$。步数对应 seq 中该步的数组下标，例如对于输入 (1, [11, 12], 2)，返回数字 30001，因为第 0 步 选手 1 播撒了己方 1 号棋洞 后，应该轮到 选手 2 行棋，而操作序列中 第 1 步 为 选手 1 再次操作，因此该步不合法。
 export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
-  let kalah: i32[][] = new Array<i32[]>(3);
-  for (let i = 1; i <= 2; i++) {
-    kalah[i] = new Array<i32>(7);
-    for (let j = 1; j < kalah[i].length; j++) {
-      kalah[i][j] = 4;
-    }
-  }
+  let kalah: i32[][] = [[], [0, 4, 4, 4, 4, 4, 4], [0, 4, 4, 4, 4, 4, 4]];
   let score1: i32 = 0;
   let score2: i32 = 0;
   let nextDirec = flag;
   for (let i = 0; i < size; i++) {
     let direct = seq[i] / 10;
-    if (direct != nextDirec) {
+    let hole = seq[i] % 10; //start from this hole
+    if (direct != nextDirec  || hole < 1 || hole > 6) {
       return 30000 + i;
     }
-    let hole = seq[i] % 10; //start from this hole
     hole = direct === 2 ? 7 - hole : hole;
     let piece = kalah[direct][hole]; //leave piece sum
     if (piece == 0) {
@@ -108,7 +102,6 @@ export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
     } else {
       nextDirec = direct;
     }
-    console.log(i.toString() + " " + nextDirec.toString());
     if (direct === 1) {
       if (hole > 0 && kalah[1][hole] === 1 && kalah[2][hole] != 0) {
         score1 += kalah[1][hole] + kalah[2][hole];
@@ -142,23 +135,9 @@ export function mancalaResult(flag: i32, seq: Array<i32>, size: i32): i32 {
 }
 
 export function isFinish(seq1: Array<i32>, seq2: Array<i32>): i32 {
-  let flag1: bool = true;
-  for (let j = 1; j <= 6; j++) {
-    if (seq1[j] !== 0) {
-      flag1 = false;
-    }
-  }
-  if (flag1) {
-    return 1;
-  }
-  let flag2: bool = true;
-  for (let j = 1; j <= 6; j++) {
-    if (seq2[j] !== 0) {
-      flag2 = false;
-    }
-  }
-  if (flag2) {
-    return 2;
-  }
+  let side1Empty = seq1.slice(1).every(hole => hole === 0);
+  let side2Empty = seq2.slice(1).every(hole => hole === 0);
+  if (side1Empty) return 1;
+  if (side2Empty) return 2;
   return 0;
 }
