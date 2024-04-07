@@ -13,6 +13,12 @@ t3-2-as-rival1/*
 t3-2-as-rival1
 log/*
 log
+t3-2-as-rival2/*
+t3-2-as-rival/load.js
+t3-2-as-rival/t3-2.wasm
+t3-2-as/build.zip
+
+
 # output_T3_0.txt
 # output_T3_complete_0.txt
 # output_T3_incomplete_0.txt

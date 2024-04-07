@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 function mancalaOperator(flag, array) {
     // 前置导入
-    const wasmBuffer = readFileSync('./t3-2-as-rival/t3-2-c-pre.wasm');
+    const wasmBuffer = readFileSync('./t3-2-as-rival/t3-2-c-pre(3).wasm');
     const wasmCode = new Uint8Array(wasmBuffer);
     const wasmModule = new WebAssembly.Module(wasmCode); 
     const wasmInstance = new WebAssembly.Instance(wasmModule);
